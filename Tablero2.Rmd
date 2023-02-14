@@ -1,0 +1,192 @@
+---
+title: "Carrera de La Luz 2022 Dashboard"
+subtile: "Actividad 1 - Métodos y Simulación Estadística"
+output: 
+  flexdashboard::flex_dashboard:
+    theme:
+      bg: "white"
+      fg: "blue" 
+      primary: "blue"
+      base_font:
+        google: Prompt
+      code_font:
+        google: JetBrains Mono
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(paqueteMET)
+library(readr)
+library(ggplot2)
+# Install thematic and un-comment for themed static plots (i.e., ggplot2)
+# thematic::thematic_rmd()
+
+categoria= c("Juvenil","Abierta","Veteranos A", "Veteranos B","Veteranos C")
+paleta6=c("#447270", "#6B9493", "#F6E271", "#F6B916", "#F69312", "#BC6C25")
+CarreraLuz22F = subset(CarreraLuz22, CarreraLuz22$sex=="Mujer")
+CarreraLuz22M = subset(CarreraLuz22, CarreraLuz22$sex=="Hombre")
+
+Theme2 = theme(
+  axis.title.x = element_text(size = 10),
+  axis.text.x = element_text(size = 10),
+  axis.title.y = element_text(size = 10),
+  axis.text.y = element_text(size = 10),
+  axis.text = element_text( size = 10),
+  legend.title = element_text(size = 10),
+  legend.text = element_text(size = 10),  
+  strip.text = element_text(size = 10),
+  title =element_text(size=14, face='bold'))
+```
+
+
+## Column {.tabset data-width="700"}
+-----------------------------------------------------------------------
+### Tiempos segun edad 
+
+```{r}
+data("CarreraLuz22")
+
+ggplot(CarreraLuz22F, aes(y=timerun/60 , x=categoria))+geom_jitter(color="#034A94", size=1, alpha=0.9) +
+  aes(color=paleta6)+
+  labs(title = " Tiempos Por Categorias ", 
+       y= "tiempo - min",
+       x= "categorias")+ 
+  ylim(0,170)+
+  Theme2
+```
+
+### Hombres por categorias
+
+```{r, fig.height=6, fig.width= 9}
+ggplot(CarreraLuz22M, aes(x = categoria, y = timerun/60 )) +
+  geom_boxplot(aes(fill = categoria)) + 
+   facet_wrap(~sex, ncol=1, labeller = labeller(dose = categoria))+
+  labs (title = "Distribucion x Categorias", y= "tiempo - min", x= "categorias")+
+  #scale_fill_brewer() +
+  scale_fill_manual(values = c("#447270", "#6B9493", "#F6E271", "#F6B916", "#F69312", "#BC6C25"))+
+  theme(legend.position = "right")
+```
+
+
+### Mujeres por categorias
+```{r, fig.height=6, fig.width= 9}
+ggplot(CarreraLuz22F, aes(x = categoria, y = timerun/60 )) +
+  geom_boxplot(aes(fill = categoria)) + 
+   facet_wrap(~sex, ncol=1, labeller = labeller(dose = categoria))+
+  labs(title = "Distribucion x Categorias", y= "tiempo - min", x= "categorias")+
+  #scale_fill_brewer() +
+  scale_fill_manual(values = c("#447270", "#6B9493", "#F6E271", "#F6B916", "#F69312", "#BC6C25"))+
+  theme(legend.position = "right")
+```
+
+### Mas informacion
+
+```{r, echo=FALSE, out.width="90%",out.height=="50%", fig.align = "center"}
+knitr::include_graphics("D:/Downloads/carrera1.png")
+```
+**10.07 K** Participantes desde los 15 años en adelante.
+
+**Salida**: Hotel Intercontinental, calle 5, Carrera 6, carrera 4c, carrera1, carrera 4, calle de la escopeta, museo arqueológico la merced, bulevar del rio, puente Ortiz, av 2N, parque lineal rio Cali av2n, calle 25, parque lineal av1n, calle 13, carrera 1 calle 12, carrera 5, calle 10, gobernación del valle, edificio Aristi carrera 9, calle 9 plazoleta de san francisco, bulevar del rio, calle 8, carrera 4, carrera 3ª, parque del peñón, carrera 3, carrera 3ª oeste, calle 5 oeste, carrera 4, av Belalcázar, carrera 2ª oeste, librería nacional, carrera 1c, museo la tertulia, av Colombia, pepe ganga, carrera 3, carrera 2, carrera 3ª, av Colombia, carrera 4, meta hotel intercontinental. [juanchocorrelon.com](https://juanchocorrelon.com/intercontinental-10k-luz-2022/#10k)
+
+
+
+
+## Column {data-width="400"}
+-----------------------------------------------------------------------
+
+### Tiempo mujeres categoria Abierta
+
+```{r}
+
+Hc=subset(CarreraLuz22,(CarreraLuz22$sex=="Mujer" & CarreraLuz22$categoria=="2. Abierta"))
+Hc1=Hc$timerun/60
+hist (Hc1,main= "Abierta vs Mujeres",
+      xlab="tiempo (min)",
+      ylab = "frecuencia",
+      xlim = c(30,120), 
+      ylim = c(0,90),  
+      col = "orange")
+```
+
+### Tiempo hombres categoria Abierta
+
+```{r}
+Hc2=subset(CarreraLuz22,(CarreraLuz22$sex=="Hombre" & CarreraLuz22$categoria=="2. Abierta"))
+Hc3=Hc2$timerun/60
+hist (Hc3,main= "Abierta vs Hombres", 
+      xlab="tiempo (min)",
+      ylab = "frecuencia", 
+      xlim = c(20,120), 
+      ylim = c(0,250),  
+      col = "orange")
+```
+
+
+
+
+## Column {data-width="50"}
+
+-----------------------------------------------------------------------
+
+### Chart A 
+
+```{r}
+Gan=paste(round(min(Hc3), digits=1),"min")
+valueBox (value = Gan,
+         caption = "Tiempo Ganador",
+         icon = "fa-thumbs-up", 
+         color = "blue")
+
+```
+
+### Chart B
+
+```{r}
+Vel=paste(round(10070/min(CarreraLuz22$timerun), digits=2),"m/s")
+valueBox(value = Vel,
+         caption = "Maxima Velocidad",
+         icon = "fa-clock", 
+         color = "blue")
+
+```
+
+### Chart C
+
+```{r}
+valueBox(value = paste(10.07,"Km"),
+         caption = "Distancia Recorrida",
+         icon = "fa-crosshairs", 
+         color = "blue")
+```
+
+### Chart D
+
+```{r}
+Cant=paste(length(CarreraLuz22$timerun), "atletas")
+valueBox(value = Cant,
+         caption = "Numero de Participantes",
+         icon = "fa-users", 
+         color = "blue")
+```
+
+### Chart E
+
+```{r}
+CantM= length(subset.default(CarreraLuz22$timerun , CarreraLuz22$sex=="Mujer"))
+valueBox(value = paste(round((CantM)/(length(CarreraLuz22$timerun) )*100,2),"%") ,caption = "Porcentaje de Mujeres",
+         icon = "fa-venus", 
+         color = "blue")
+```
+
+### Chart F
+
+```{r}
+valueBox(value = paste(round(mean(CarreraLuz22$timerun)/60,2), "min"),
+         caption = "Tiempo Promedio de Carrera",
+         icon = "fa-solid fa-chart", 
+         color = "blue")
+```
+
+
